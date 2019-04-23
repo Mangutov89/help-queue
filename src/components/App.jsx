@@ -12,15 +12,17 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      masterTicketList: []
+      masterTicketList: [],
+      selectedTicket: null
     };
     this.handleAddingNewTicketToList = this.handleAddingNewTicketToList.bind(this);
+    this.handleChangingSelectedTicket = this.handleChangingSelectedTicket.bind(this);
   }
 
-    componentDidMount() {
-      this.waitTimeUpdateTimer = setInterval(() =>
+  componentDidMount() {
+    this.waitTimeUpdateTimer = setInterval(() =>
       this.updateTicketElapsedWaitTime(),
-      60000
+    5000
     );
   }
 
@@ -28,9 +30,14 @@ class App extends React.Component {
     clearInterval(this.waitTimeUpdateTimer);
   }
 
+  handleChangingSelectedTicket(ticket) {
+    this.setState({selectedTicket: ticket});
+  }
+
+
   handleAddingNewTicketToList(newTicket){
     let newMasterTicketList = this.state.masterTicketList.slice();
-    newTicket.formattedWaitTime = (newTicket.timeOpen).fromNow(true)
+    newTicket.formattedWaitTime = (newTicket.timeOpen).fromNow(true);
     newMasterTicketList.push(newTicket);
     this.setState({masterTicketList: newMasterTicketList});
   }
@@ -52,7 +59,8 @@ class App extends React.Component {
         <Switch>
           <Route exact path='/' render={()=><TicketList ticketList={this.state.masterTicketList} />} />
           <Route path='/newticket' render={()=><NewTicketControl onNewTicketCreation={this.handleAddingNewTicketToList} />} />
-          <Route path='/admin' render={(props) => <Admin ticketList= {this.state.masterTicketList} currentRouterPath={props.location.pathname}/>} />
+          <Route path='/admin' render={(props) => <Admin ticketList={this.state.masterTicketList}  currentRouterPath={props.location.pathname} onTicketSelection={this.handleChangingSelectedTicket}
+            selectedTicket={this.state.selectedTicket}/>} />
           <Route component={Error404} />
         </Switch>
       </div>
