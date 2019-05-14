@@ -7,6 +7,8 @@ import Error404 from './Error404';
 import Admin from './Admin';
 import { v4 } from 'uuid';
 // import Moment from 'moment';
+import NewHighScoreForm from './NewHighScoreForm';
+import HighScoreList from './HighScoreList';
 
 class App extends React.Component {
 
@@ -14,10 +16,20 @@ class App extends React.Component {
     super(props);
     this.state = {
       masterTicketList: {},
-      selectedTicket: null
+      selectedTicket: null,
+      masterHighScoreList: []
     };
     this.handleAddingNewTicketToList = this.handleAddingNewTicketToList.bind(this);
     this.handleChangingSelectedTicket = this.handleChangingSelectedTicket.bind(this);
+
+
+    this.handleAddingNewHighScoreToList = this.handleAddingNewHighScoreToList.bind(this);
+  }
+
+  handleAddingNewHighScoreToList(newHighScore) {
+    let newHighScoreList = this.state.masterHighScoreList.slice();
+    newHighScoreList.push(newHighScore);
+    this.setState({masterHighScoreList: newHighScoreList});
   }
 
   componentDidMount() {
@@ -56,7 +68,7 @@ class App extends React.Component {
 
 
   render(){
-    console.log(this.state.masterTicketList);
+    console.log(this.state.masterHighScoreList);
     return (
       <div>
         <Header/>
@@ -65,7 +77,15 @@ class App extends React.Component {
           <Route path='/newticket' render={()=><NewTicketControl onNewTicketCreation={this.handleAddingNewTicketToList} />} />
           <Route path='/admin' render={(props) => <Admin ticketList={this.state.masterTicketList}  currentRouterPath={props.location.pathname} onTicketSelection={this.handleChangingSelectedTicket}
             selectedTicket={this.state.selectedTicket}/>} />
+
+
+          <Route path= '/newhighscore' render={()=><NewHighScoreForm onNewHighScoreCreation={this.handleAddingNewHighScoreToList}/>} />
+          <Route path= '/highscore' render={()=><HighScoreList highScoreList={this.state.masterHighScoreList} />} />
+
           <Route component={Error404} />
+
+
+
         </Switch>
       </div>
     );
